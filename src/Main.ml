@@ -40,7 +40,8 @@ let num_cores_term =
   let info =
     Arg.info ["j"; "num-cores"]  (* '-j' and '--num-cores' will be synonyms *)
       ~docv:"NUM"
-      ~doc:"$(docv) specifies the number of cores to use."
+      ~doc:"Example of optional value with a default.
+            The value of \\$\\(docv\\) is $(docv)."
   in
   Arg.value (Arg.opt Arg.int default info)
 
