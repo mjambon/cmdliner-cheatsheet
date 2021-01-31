@@ -10,11 +10,23 @@ Cmdliner is to be used instead of the `Arg` module from the standard library.
 
 This cheatsheet is a compact reference for common patterns.
 
-Anonymous argument required at specific position
+Anonymous argument at specific position
 --
 
-Anonymous argument optional at specific position
---
+```
+$ foo 42 -j 8 data.csv          -> Some "data,csv"
+      ^^      ^^^^^^^^
+      0       1
+```
+
+```
+let input_file_term =
+  let info =
+    Arg.info []
+      ~doc:"Example of an anonymous argument at a fixed position"
+  in
+  Arg.value (Arg.pos 1 (Arg.some Arg.file) None info)
+```
 
 Any number of anonymous arguments
 --
@@ -31,12 +43,12 @@ $ foo --no-exe    -> true
 let no_exe_term =
   let info =
     Arg.info ["no-exe"]
-      ~doc:"Example of flag, which sets a boolean to true."
+      ~doc:"Example of a flag, which sets a boolean to true."
   in
   Arg.value (Arg.flag info)
 ```
 
-Complete optional argument specification
+Optional argument specification
 --
 
 ```
@@ -110,23 +122,27 @@ Arg.value (Arg.pos_all Arg.file default info)
 Predefined argument converters
 --
 
-* no conversion: `Arg.string`
-* literal `true` or `false`: `Arg.bool`. See `Arg.flag` for a simple
-  flag that means "true".
-* single byte: `Arg.char`
-* numeric types:
-  - `Arg.int`
-  - `Arg.float`
-  - `Arg.int32`
-  - `Arg.int64`
-  - `Arg.nativeint`
-* enum-like custom mapping: `Arg.enum ["foo", Foo; "bar", Bar]`
-* any "file" that must exist, including directories: `Arg.file`
-* directory that must exist: `Arg.dir`
-* any file that must exist, other than a directory: `Arg.non_dir_file`
-* comma-separated values:
-  - `Arg.list Arg.int`
-  - `Arg.array Arg.string`
-* custom value splitting:
-  - `Arg.list ~sep:';' Arg.int`
-  - `Arg.array ~sep:'.' Arg.string`
+```
+Raw argument        OCaml value        Converter
+
+abc                 "abc"              Arg.string
+true                true               Arg.bool
+false               false              Arg.bool
+x                   'x'                Arg.char
+%                   '%'                Arg.char
+123                 123                Arg.int
+123                 123.               Arg.float
+123.4               123.4              Arg.float
+-1.2e6              -1.2e6             Arg.float
+123                 123l               Arg.int32
+123                 123L               Arg.int64
+foo                 Foo                Arg.enum ["foo", Foo; "bar", Bar]
+data.csv            "data.csv"         Arg.file (* path must exist *)
+data/               "data/"            Arg.file (* path must exist *)
+data/               "data/"            Arg.dir (* must be a folder *)
+data.csv            "data.csv"         Arg.non_dir_file (* file must exist *)
+foo.sock            "foo.sock"         Arg.non_dir_file (* file must exist *)
+ab,c,d              ["ab"; "c"; "d"]   Arg.list Arg.string
+17,42               [|17; 42|]         Arg.array Arg.int
+ab:c:d              ["ab"; "c"; "d"]   Arg.list ~sep:':' Arg.string
+```
