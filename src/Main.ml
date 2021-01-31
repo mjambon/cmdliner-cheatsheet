@@ -40,7 +40,7 @@ let num_cores_term =
   let info =
     Arg.info ["j"; "num-cores"]  (* '-j' and '--num-cores' will be synonyms *)
       ~docv:"NUM"
-      ~doc:"Example of optional value with a default.
+      ~doc:"Example of an optional value with a default.
             The value of \\$\\(docv\\) is $(docv)."
   in
   Arg.value (Arg.opt Arg.int default info)
@@ -49,7 +49,7 @@ let user_name_term =
   let info =
     Arg.info ["u"; "user-name"]
       ~docv:"NAME"
-      ~doc:"$(docv) specifies a user name."
+      ~doc:"Example of an optional value without a default."
   in
   Arg.value (Arg.opt (Arg.some Arg.string) None info)
 
