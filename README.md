@@ -14,12 +14,12 @@ Anonymous argument at specific position
 --
 
 ```
-$ foo 42 -j 8 data.csv          -> Some "data,csv"
+$ foo 42 -j 8 data.csv        -> Some "data.csv"
       ^^      ^^^^^^^^
       0       1
 ```
 
-```
+```ocaml
 let input_file_term =
   let info =
     Arg.info []
@@ -30,6 +30,28 @@ let input_file_term =
 
 Any number of anonymous arguments
 --
+
+```
+$ foo                         -> []
+$ foo a.csv b.csv c.csv       -> ["a.csv"; "b.csv"; "c.csv"]
+```
+
+```ocaml
+Arg.value (Arg.pos_all Arg.file [] info)
+```
+
+Any number of anonymous arguments, defaulting to non-empty list
+--
+
+```
+$ foo                         -> ["."]
+$ foo a.csv b.csv c.csv       -> ["a.csv"; "b.csv"; "c.csv"]
+```
+
+```ocaml
+let default = ["."] in
+Arg.value (Arg.pos_all Arg.file default info)
+```
 
 Simple flag
 --
@@ -63,7 +85,7 @@ let num_cores_term =
   let info =
     Arg.info ["j"; "num-cores"]  (* '-j' and '--num-cores' will be synonyms *)
       ~docv:"NUM"
-      ~doc:"Example of an optional value with a default.
+      ~doc:"Example of an optional argument with a default.
             The value of \\$\\(docv\\) is $(docv)."
   in
   Arg.value (Arg.opt Arg.int default info)

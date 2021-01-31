@@ -1,5 +1,6 @@
 (*
    Source code for the cmdliner-cheatsheet executable.
+   This can serve as a template for new programs.
 
    This sample program exercises various features of cmdliner. It
    can be compiled and run to check how the various options work.
@@ -14,20 +15,32 @@ open Cmdliner
    record of the following type.
 *)
 type conf = {
+  input_file: string option;
   num_cores: int; (* matches long option name "--num-cores" for consistency *)
   user_name: string option;
+  tags: string list;
 }
 
 (*
    The core of the application.
 *)
 let run conf =
-  let msg =
-    match conf.user_name with
-    | None -> "Hello."
-    | Some name -> sprintf "Hello, %s." name
-  in
-  print_endline msg
+  printf "\
+Configuration:
+  input file: %s
+  number of cores: %i
+  user name: %s
+  tags: %s
+"
+    (match conf.input_file with
+     | None -> "none"
+     | Some s -> sprintf "%S" s)
+    conf.num_cores
+    (match conf.user_name with
+     | None -> "none"
+     | Some s -> sprintf "%S" s)
+    (sprintf "[%s]" (List.map (sprintf "%S") conf.tags
+                     |> String.concat ", "))
 
 (************************* Command-line management *************************)
 
@@ -35,12 +48,20 @@ let run conf =
    For each kind of command-line argument, we define a "term" object.
 *)
 
+let input_file_term =
+  let info =
+    Arg.info []
+      ~docv:"FILE"
+      ~doc:"Example of an anonymous argument at a fixed position."
+  in
+  Arg.value (Arg.pos 0 (Arg.some Arg.file) None info)
+
 let num_cores_term =
   let default = 1 in
   let info =
     Arg.info ["j"; "num-cores"]  (* '-j' and '--num-cores' will be synonyms *)
       ~docv:"NUM"
-      ~doc:"Example of an optional value with a default.
+      ~doc:"Example of an optional argument with a default.
             The value of \\$\\(docv\\) is $(docv)."
   in
   Arg.value (Arg.opt Arg.int default info)
@@ -49,9 +70,17 @@ let user_name_term =
   let info =
     Arg.info ["u"; "user-name"]
       ~docv:"NAME"
-      ~doc:"Example of an optional value without a default."
+      ~doc:"Example of an optional argument without a default."
   in
   Arg.value (Arg.opt (Arg.some Arg.string) None info)
+
+let tag_term =
+  let info =
+    Arg.info []
+      ~docv:"TAG"
+      ~doc:"Example of a list of anonymous arguments."
+  in
+  Arg.value (Arg.pos_all Arg.string [] info)
 
 (*
    Combine the values collected for each kind of argument into a single
@@ -61,12 +90,24 @@ let user_name_term =
    we just map each argument to its own record field.
 *)
 let cmdline_term =
-  let combine num_cores user_name =
-    { num_cores; user_name }
+  let combine input_file num_cores user_name tags =
+    let only_tags =
+      match tags with
+      | [] -> []
+      | _input_file :: tags -> tags
+    in
+    {
+      input_file;
+      num_cores;
+      user_name;
+      tags = only_tags;
+    }
   in
   Term.(const combine
+        $ input_file_term
         $ num_cores_term
         $ user_name_term
+        $ tag_term
        )
 
 (*
@@ -99,7 +140,7 @@ let man = [
       https://github.com/mjambon/cmdliner-cheatsheet";
 
   `S Manpage.s_see_also;
-  `P "cmdliner library https://erratique.ch/software/cmdliner/doc/Cmdliner"
+  `P "Cmdliner project https://erratique.ch/software/cmdliner/doc/Cmdliner"
 ]
 
 (*
