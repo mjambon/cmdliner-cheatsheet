@@ -1,0 +1,27 @@
+#
+# Circle CI configuration. Runs each time we push a new commit to Github.
+#
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: mjambon/mj-ocaml:ubuntu
+    working_directory: ~/cmdliner-cheatsheet
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: ./.circleci/setup
+      - run:
+          name: Build
+          command: opam exec -- make
+      - run:
+          name: Test
+          command: opam exec -- make test
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build

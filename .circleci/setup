@@ -1,0 +1,10 @@
+#! /bin/bash
+#
+# Setup script for building and testing the project.
+# Assumes opam is installed.
+#
+set -eu
+
+eval $(opam env)
+opam update
+opam install -y dune cmdliner

@@ -8,6 +8,9 @@ build:
 	dune build @install
 	test -e bin || ln -s _build/install/default/bin
 
+.PHONY: test
+	./bin/cmdliner-cheatsheet . foo -j 99 bar --user-name mj
+
 .PHONY: install
 install:
 	dune install

@@ -30,7 +30,7 @@ $ foo 42 -j 8 data.csv        -> Some "data.csv"
 ```ocaml
 let input_file_term =
   let info =
-    Arg.info []
+    Arg.info []  (* list must be empty for anonymous arguments *)
       ~doc:"Example of an anonymous argument at a fixed position"
   in
   Arg.value (Arg.pos 1 (Arg.some Arg.file) None info)

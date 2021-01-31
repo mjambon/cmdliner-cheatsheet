@@ -50,7 +50,7 @@ Configuration:
 
 let input_file_term =
   let info =
-    Arg.info []
+    Arg.info []  (* list must be empty for anonymous arguments *)
       ~docv:"FILE"
       ~doc:"Example of an anonymous argument at a fixed position."
   in
