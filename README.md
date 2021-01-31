@@ -1,4 +1,4 @@
-Cmdliner cheatsheet
+Cmdliner cheatsheet [![CircleCI badge](https://circleci.com/gh/mjambon/cmdliner-cheatsheet.svg?style=svg)](https://app.circleci.com/pipelines/github/mjambon/cmdliner-cheatsheet)
 ==
 
 [Cmdliner](https://erratique.ch/software/cmdliner) is a
