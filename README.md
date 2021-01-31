@@ -2,13 +2,21 @@ Cmdliner cheatsheet
 ==
 
 [Cmdliner](https://erratique.ch/software/cmdliner) is a
-feature-complete library for parsing the command line of an OCaml
-program. It supports long options, short options, subcommands, and custom
-argument formats like you've always wanted. The output of `--help`
-is similar to a man page, see for example `opam --help`.
+feature-complete library for parsing the command line from an OCaml
+program. The output of `--help` is similar to a man page, see for
+example `opam --help`.
 Cmdliner is to be used instead of the `Arg` module from the standard library.
 
 This cheatsheet is a compact reference for common patterns.
+
+[A sample program](src/Main.ml) is also provided for exploration
+purposes or as a template for new projects. Clone this git repository
+and test it as follows (requires `dune` and of course `cmdliner`):
+```
+$ make
+$ ./bin/cmdliner-cheatsheet --help
+$ ./bin/cmdliner-cheatsheet
+```
 
 Anonymous argument at specific position
 --
@@ -116,31 +124,6 @@ let default = 1 in
 Arg.value (Arg.opt Arg.int default info)
 ```
 
-List of values defaulting to empty list
---
-
-```
-$ foo                           -> []
-$ foo --bar elt1 --bar elt2     -> ["elt1"; "elt2"]
-```
-
-```ocaml
-Arg.value (Arg.pos_all Arg.string [] info)
-```
-
-List of values defaulting to non-empty list
---
-
-```
-$ foo                           -> ["."]
-$ foo --bar elt1 --bar elt2     -> ["elt1"; "elt2"]
-```
-
-```ocaml
-let default = ["."] in
-Arg.value (Arg.pos_all Arg.file default info)
-```
-
 Predefined argument converters
 --
 
@@ -168,3 +151,10 @@ ab,c,d              ["ab"; "c"; "d"]   Arg.list Arg.string
 17,42               [|17; 42|]         Arg.array Arg.int
 ab:c:d              ["ab"; "c"; "d"]   Arg.list ~sep:':' Arg.string
 ```
+
+Conclusion
+--
+
+Cmdliner offers various advanced and useful features that are not
+covered here. Please consult the [official
+documentation](https://erratique.ch/software/cmdliner/doc/Cmdliner.html).
