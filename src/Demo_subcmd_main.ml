@@ -12,7 +12,7 @@
 
 open Printf
 
-(* provides Term, Arg, and 'Manpage' modules. *)
+(* Provide 'Term', 'Arg', and 'Manpage' modules. *)
 open Cmdliner
 
 type subcmd1_conf = {
