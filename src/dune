@@ -1,5 +1,11 @@
-(executable
-  (public_name cmdliner-cheatsheet)
-  (name Main)
+(executables
+  (public_names
+    cmdliner-demo-arg
+    cmdliner-demo-subcmd
+  )
+  (names
+    Demo_arg_main
+    Demo_subcmd_main
+  )
   (libraries cmdliner)
 )

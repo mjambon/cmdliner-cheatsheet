@@ -9,13 +9,17 @@ Cmdliner is to be used instead of the `Arg` module from the standard library.
 
 This cheatsheet is a compact reference for common patterns.
 
-[A sample program](src/Main.ml) is also provided for exploration
+[Two sample programs](src) are provided for exploration
 purposes or as a template for new projects. Clone this git repository
 and test it as follows (requires `dune` and of course `cmdliner`):
 ```
 $ make
-$ ./bin/cmdliner-cheatsheet --help
-$ ./bin/cmdliner-cheatsheet
+$ make test
+
+$ ./bin/cmdliner-demo-arg --help
+$ ./bin/cmdliner-demo-arg             # try with some options
+$ ./bin/cmdliner-demo-subcmd
+$ ./bin/cmdliner-demo-subcmd subcmd1  # try with some options
 ```
 
 Anonymous argument at specific position
@@ -150,6 +154,48 @@ foo.sock            "foo.sock"         Arg.non_dir_file (* file must exist *)
 ab,c,d              ["ab"; "c"; "d"]   Arg.list Arg.string
 17,42               [|17; 42|]         Arg.array Arg.int
 ab:c:d              ["ab"; "c"; "d"]   Arg.list ~sep:':' Arg.string
+```
+
+Subcommands
+--
+
+```
+$ foo                 # displays root help page
+$ foo --help          # also display root help page
+$ foo subcmd1         # returns 'Subcmd1 { ... }'
+$ foo subcmd2 --bar   # returns 'Subcmd2 { ... }'
+```
+
+Each subcommand is defined as if it were its own command. They are
+then combined into one. See demo in [src](src).
+
+```ocaml
+...
+
+type cmd_conf =
+  | Subcmd1 of subcmd1_conf
+  | Subcmd2 of subcmd2_conf
+
+...
+
+let subcmd1_info =
+  Term.info "subcmd1"
+    ~doc:subcmd1_doc
+    ~man:subcmd1_man
+
+...
+
+let subcmd1 = (subcmd1_term, subcmd1_info)
+let subcmd2 = (subcmd2_term, subcmd2_info)
+
+let root_term = Term.ret (Term.const (`Help (`Pager, None)))
+let root_subcommand = (root_term, root_info)
+
+let parse_command_line () : cmd_conf =
+  match Term.eval_choice root_subcommand [subcmd1; subcmd2] with
+  | `Error _ -> exit 1
+  | `Version | `Help -> exit 0
+  | `Ok conf -> conf
 ```
 
 Conclusion

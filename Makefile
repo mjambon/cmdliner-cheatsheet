@@ -10,7 +10,9 @@ build:
 
 .PHONY: test
 test:
-	./bin/cmdliner-cheatsheet . foo -j 99 bar --user-name mj
+	./bin/cmdliner-demo-arg . foo -j 99 bar --user-name mj
+	./bin/cmdliner-demo-subcmd subcmd1
+	./bin/cmdliner-demo-subcmd subcmd2 --bar
 
 .PHONY: install
 install:

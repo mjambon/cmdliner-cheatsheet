@@ -4,9 +4,12 @@
 
    This sample program exercises various features of cmdliner. It
    can be compiled and run to check how the various options work.
+
+   See also 'Demo_subcmd_main.ml' for how to implement subcommands.
 *)
 
 open Printf
+
 (* Provide the 'Arg', 'Term', and 'Manpage' modules. *)
 open Cmdliner
 
