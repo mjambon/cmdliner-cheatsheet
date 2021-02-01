@@ -161,7 +161,7 @@ Subcommands
 
 ```
 $ foo                 # displays root help page
-$ foo --help          # also display root help page
+$ foo --help          # also displays root help page
 $ foo subcmd1         # returns 'Subcmd1 { ... }'
 $ foo subcmd2 --bar   # returns 'Subcmd2 { ... }'
 ```
