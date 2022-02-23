@@ -10,7 +10,7 @@ Cmdliner is to be used instead of the `Arg` module from the standard library.
 This cheatsheet is a compact reference for common patterns.
 
 [Two sample programs](src) are provided for exploration
-purposes or as a template for new projects. Clone this git repository
+purposes or as templates for new projects. Clone this git repository
 and test it as follows (requires `dune` and of course `cmdliner`):
 ```
 $ make

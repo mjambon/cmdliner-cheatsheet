@@ -30,6 +30,9 @@ type cmd_conf =
   | Subcmd1 of subcmd1_conf
   | Subcmd2 of subcmd2_conf
 
+(*
+   Do something with the parsed command line.
+*)
 let run cmd_conf =
   match cmd_conf with
   | Subcmd1 conf ->
@@ -63,9 +66,9 @@ let bar_term =
 
 (*** Putting together subcommand 'subcmd1' ***)
 
-let subcmd1_term =
+let subcmd1_term run =
   let combine foo =
-    Subcmd1 { foo }
+    Subcmd1 { foo } |> run
   in
   Term.(const combine
         $ foo_term
@@ -78,19 +81,19 @@ let subcmd1_man = [
   `P "[multiline overview of subcmd1]";
 ]
 
-let subcmd1 =
+let subcmd1 run =
   let info =
-    Term.info "subcmd1"
+    Cmd.info "subcmd1"
       ~doc:subcmd1_doc
       ~man:subcmd1_man
   in
-  (subcmd1_term, info)
+  Cmd.v info (subcmd1_term run)
 
 (*** Putting together subcommand 'subcmd2' ***)
 
-let subcmd2_term =
+let subcmd2_term run =
   let combine bar =
-    Subcmd2 { bar }
+    Subcmd2 { bar } |> run
   in
   Term.(const combine
         $ bar_term
@@ -103,13 +106,13 @@ let subcmd2_man = [
   `P "[multiline overview of subcmd2]";
 ]
 
-let subcmd2 =
+let subcmd2 run =
   let info =
-    Term.info "subcmd2"
+    Cmd.info "subcmd2"
       ~doc:subcmd2_doc
       ~man:subcmd2_man
   in
-  (subcmd2_term, info)
+  Cmd.v info (subcmd2_term run)
 
 (*** Putting together the main command ***)
 
@@ -126,19 +129,16 @@ let root_man = [
 let root_term =
   Term.ret (Term.const (`Help (`Pager, None)))
 
-let root_subcommand =
-  let info =
-    Term.info "cmdliner-demo-subcmd"
-      ~doc:root_doc
-      ~man:root_man
-  in
-  (root_term, info)
+let root_info =
+  Cmd.info "cmdliner-demo-subcmd"
+    ~doc:root_doc
+    ~man:root_man
 
 (*** Parse the command line and do something with it ***)
 
-let subcommands = [
-  subcmd1;
-  subcmd2;
+let subcommands run = [
+  subcmd1 run;
+  subcmd2 run;
 ]
 
 (*
@@ -151,14 +151,10 @@ let subcommands = [
 
    Otherwise, 'conf' is returned to the application.
 *)
-let parse_command_line () : cmd_conf =
-  match Term.eval_choice root_subcommand subcommands with
-  | `Error _ -> exit 1
-  | `Version | `Help -> exit 0
-  | `Ok conf -> conf
+let parse_command_line_and_run (run : cmd_conf -> unit) =
+  Cmd.group root_info (subcommands run) |> Cmd.eval |> exit
 
 let main () =
-  let conf = parse_command_line () in
-  run conf
+  parse_command_line_and_run run
 
 let () = main ()

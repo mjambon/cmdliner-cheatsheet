@@ -87,24 +87,25 @@ let tag_term =
 
 (*
    Combine the values collected for each kind of argument into a single
-   'conf' object.
+   'conf' object, which is then passed to our main 'run' function.
 
    Some merging and tweaking can be useful here but most often
    we just map each argument to its own record field.
 *)
-let cmdline_term =
+let cmdline_term run =
   let combine input_file num_cores user_name tags =
     let only_tags =
       match tags with
       | [] -> []
       | _input_file :: tags -> tags
     in
-    {
+    let conf = {
       input_file;
       num_cores;
       user_name;
       tags = only_tags;
-    }
+    } in
+    run conf
   in
   Term.(const combine
         $ input_file_term
@@ -147,20 +148,17 @@ let man = [
 ]
 
 (*
-   Parse the command line into a 'conf' record. Exit early with appropriate
-   exit codes if there was an error or if '--help' was requested.
+   Parse the command line into a 'conf' record and pass it to the
+   main function 'run'.
 *)
-let parse_command_line () =
+let parse_command_line_and_run run =
   let info =
-    Term.info
+    Cmd.info
       ~doc
       ~man
       "cmdliner-cheatsheet"  (* program name as it will appear in --help *)
   in
-  match Term.eval (cmdline_term, info) with
-  | `Error _ -> exit 1
-  | `Version | `Help -> exit 0
-  | `Ok conf -> conf
+  Cmd.v info (cmdline_term run) |> Cmd.eval |> exit
 
 let safe_run conf =
   try run conf
@@ -176,7 +174,6 @@ let safe_run conf =
 
 let main () =
   Printexc.record_backtrace true;
-  let conf = parse_command_line () in
-  safe_run conf
+  parse_command_line_and_run safe_run
 
 let () = main ()
