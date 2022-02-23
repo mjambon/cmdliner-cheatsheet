@@ -198,6 +198,34 @@ let parse_command_line () : cmd_conf =
   | `Ok conf -> conf
 ```
 
+Upgrade to cmdliner 1.1.x
+--
+
+```
+Error (alert deprecated): Cmdliner.Term.info
+Use Cmd.info instead.
+```
+
+```
+Error (alert deprecated): Cmdliner.Term.eval
+Use Cmd.v and one of Cmd.eval* instead.
+```
+
+```
+Error (alert deprecated): Cmdliner.Term.eval_choice
+Use Cmd.group and one of Cmd.eval* instead.
+```
+
+If you're getting the errors/warnings above after having upgraded
+cmdliner to version >= 1.1.x, check out
+[this diff](https://github.com/mjambon/cmdliner-cheatsheet/commit/8bfd6a87c57cc1445e5d338ef40711a9782ba524)
+showing a way to migrate. The main `run` function that contains the
+business logic of your application is now passed around as an
+argument, which isn't great.
+[Let us know](https://github.com/mjambon/cmdliner-cheatsheet/issues)
+if you know an easier way to separate command-line parsing
+from the rest of the application.
+
 Conclusion
 --
 
