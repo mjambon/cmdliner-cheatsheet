@@ -31,6 +31,7 @@ $ foo 42 -j 8 data.csv        -> Some "data.csv"
       0       1
 ```
 
+Optional argument at a specific position:
 ```ocaml
 let input_file_term =
   let info =
@@ -38,6 +39,16 @@ let input_file_term =
       ~doc:"Example of an anonymous argument at a fixed position"
   in
   Arg.value (Arg.pos 1 (Arg.some Arg.file) None info)
+```
+
+Required argument at a specific position:
+```ocaml
+let input_file_term =
+  let info =
+    Arg.info []  (* list must be empty for anonymous arguments *)
+      ~doc:"Example of an anonymous argument at a fixed position"
+  in
+  Arg.required (Arg.pos 1 (Arg.some Arg.file) None info)
 ```
 
 Any number of anonymous arguments
