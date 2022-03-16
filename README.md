@@ -237,6 +237,14 @@ argument, which isn't great.
 if you know an easier way to separate command-line parsing
 from the rest of the application.
 
+Alternatively, the deprecation notice can be silenced by placing
+[this floating attribute](https://ocaml.org/manual/alerts.html)
+at the beginning of the file:
+
+```ocaml
+[@@@alert "-deprecated"]
+```
+
 Conclusion
 --
 
